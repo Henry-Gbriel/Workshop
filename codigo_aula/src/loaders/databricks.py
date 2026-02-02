@@ -1,3 +1,5 @@
+#Basicamente aceeso o dado organizado em parser.py e salvo na tabela delta no databricks
+
 import pandas as pd
 from databricks.connect import DatabricksSession
 from delta.tables import DeltaTable
