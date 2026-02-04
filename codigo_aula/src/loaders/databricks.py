@@ -16,24 +16,24 @@ class DatabricksLoader:
         self.session = None
 
     def open_connection(self) -> None:
-        self.session = DatabricksSession.builder.serverless().getOrCreate()
+        self.session = DatabricksSession.builder.serverless().getOrCreate() #Cria a sessão do databricks
 
     def close_connection(self) -> None:
-        if self.session is not None:
+        if self.session is not None: #Se a sessão existir
             try:
-                self.session.stop()
+                self.session.stop() #Invalida a sessão
             except:
                 pass
-            self.session = None
+            self.session = None # Limpa a sessão
 
     def load_records(
         self, pandas_df: pd.DataFrame, table: str, pk_columns: list = None
     ) -> None:
-        assert self.session is not None
+        assert self.session is not None #Assegura que a sessão foi criada
 
         print(f"Loading records into Databricks table: {table}")
 
-        table_path = f"{CATALOG}.{SCHEMA}.{table}"
+        table_path = f"{CATALOG}.{SCHEMA}.{table}" #Caminho completo da tabela
 
         self.session.sql(f"CREATE CATALOG IF NOT EXISTS {CATALOG}")
         self.session.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOG}.{SCHEMA}")
@@ -41,4 +41,4 @@ class DatabricksLoader:
         df = self.session.createDataFrame(pandas_df)
         df = df.withColumn("ingestion_date", current_timestamp())
 
-        df.write.format("delta").mode("overwrite").saveAsTable(table_path)
+        df.write.format("delta").mode("overwrite").saveAsTable(table_path) #Salva o dataframe na tabela delta
